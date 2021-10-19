@@ -16,4 +16,7 @@ class NewspaperItem(scrapy.Item):
     dateModified = scrapy.Field()
     datePublished = scrapy.Field()
     description = scrapy.Field()
-    articleBody = scrapy.Field()    
+    articleBody = scrapy.Field()  
+    
+    image_urls = scrapy.Field()
+    images = scrapy.Field()

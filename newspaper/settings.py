@@ -17,7 +17,18 @@ NEWSPIDER_MODULE = 'newspaper.spiders'
 #USER_AGENT = 'newspaper (+http://www.yourdomain.com)'
 
 # Obey robots.txt rules
-ROBOTSTXT_OBEY = True
+ROBOTSTXT_OBEY = False
+
+# Configure item pipelines
+# See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
+ITEM_PIPELINES = {
+    # default image pipeline of scrapy, use this for hash values
+    # 'scrapy.pipelines.images.ImagesPipeline': 300,
+    
+    #customized pipeline, see pipeline.py for more informations 
+    'newspaper.pipelines.NewspaperPipeline': 300    
+}
+IMAGES_STORE = './Images'
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
@@ -60,15 +71,9 @@ ROBOTSTXT_OBEY = True
 #    'scrapy.extensions.telnet.TelnetConsole': None,
 #}
 
-# Configure item pipelines
-# See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
-#    'newspaper.pipelines.NewspaperPipeline': 300,
-#}
-
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
-#AUTOTHROTTLE_ENABLED = True
+# AUTOTHROTTLE_ENABLED = True
 # The initial download delay
 #AUTOTHROTTLE_START_DELAY = 5
 # The maximum download delay to be set in case of high latencies
