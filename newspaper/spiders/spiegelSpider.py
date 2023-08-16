@@ -1,7 +1,12 @@
 import scrapy
 from newspaper.items import NewspaperItem
 import json
+import sys
+import os
 
+parentdir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+sys.path.append(parentdir)
+import main
 
 class SpiegelSpider(scrapy.Spider):
     name = 'getSpiegelArticle'
@@ -9,8 +14,9 @@ class SpiegelSpider(scrapy.Spider):
 
     def parse(self, response):
         articles = response.xpath("//item/link/text()").getall()
-        yield from response.follow_all(articles, self.parseArticle)
-        pass
+        for article in articles:
+            if not main.is_in_database(article):
+                yield response.follow(article, self.parseArticle)
 
     def parseArticle(self, response):
         text = response.css("article p::text").getall()

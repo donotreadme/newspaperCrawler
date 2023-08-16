@@ -1,7 +1,12 @@
 import scrapy
 from newspaper.items import NewspaperItem
 import json
+import os
+import sys
 
+parentdir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+sys.path.append(parentdir)
+import main
 
 class WeltSpider(scrapy.Spider):
     name = 'getWeltArticle'
@@ -9,7 +14,9 @@ class WeltSpider(scrapy.Spider):
 
     def parse(self, response):
         articles = response.xpath("//item/link/text()").getall()
-        yield from response.follow_all(articles, self.parseArticle)
+        for article in articles:
+            if not main.is_in_database(article):
+                yield response.follow(article, self.parseArticle)
 
     def parseArticle(self, response):
         text = response.xpath("//script[contains(., 'articleBody')]/text()").get()

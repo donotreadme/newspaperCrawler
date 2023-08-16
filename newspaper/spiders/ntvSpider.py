@@ -1,7 +1,12 @@
 import scrapy
 from newspaper.items import NewspaperItem
 import json
+import sys
+import os
 
+parentdir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+sys.path.append(parentdir)
+import main
 
 class NtvSpider(scrapy.Spider):
     name = 'getNtvArticle'
@@ -9,8 +14,9 @@ class NtvSpider(scrapy.Spider):
     
     def parse(self, response):
         articles = response.xpath("//item/link/text()").getall()
-        yield from response.follow_all(articles, self.parseArticle)
-        pass
+        for article in articles:
+            if not main.is_in_database(article):
+                yield response.follow(article, self.parseArticle)
 
     def parseArticle(self, response):
         news = NewspaperItem()
@@ -24,8 +30,8 @@ class NtvSpider(scrapy.Spider):
         news['headline'] = elements['headline']
         news['author'] = elements['author']
         news['description'] = elements['description']
-        news['dateModified'] = elements['dateModified']
-        news['datePublished'] = elements['datePublished']
+        news['dateModified'] = response.xpath("//meta[@name='last-modified']/@content").get()
+        news['datePublished'] = response.xpath("//meta[@name='date']/@content").get()
         return news
     
     
