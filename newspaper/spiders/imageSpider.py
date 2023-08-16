@@ -4,16 +4,16 @@ import json
 
 
 class ImageSpider(scrapy.Spider):
-    name = "getImages"
-    f = open("WeltDE_Urls.txt", "r")
-    start_urls = [url.strip() for url in f.readlines()]
-    f.close()
-    f = open("SpiegelDE_Urls.txt", "r")
-    for url in f.readlines():
-        start_urls.append(url.strip())
-    f.close()
-    
+    name = "getImages"    
+    start_urls = ['https://www.welt.de/newsticker/',
+                  'https://www.spiegel.de/schlagzeilen/']
+
     def parse(self, response):
+        for title in response.xpath("//article//a/@href").getall(): 
+            yield response.follow(title, self.parseArticle)
+
+
+    def parseArticle(self, response):
         # initalize a NewsPaperItem which gets later returned to the scrapy pipeline 
         news = NewspaperItem()
         # the path to images is the same for Welt and Spiegel 
